@@ -1,0 +1,38 @@
+server:
+  port: 8081
+file:
+  upload:
+    dir:D:/upload/
+jwt:
+  #jwt密钥，自定义
+  secret: jwt_login
+  #token有效时间（毫秒）
+  expiredTime: 600000
+spring:
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    #驱动类名(MySQL 8.x)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #数据库连接url，其中mydb为要连接的数据库名称
+    url: jdbc:mysql://localhost:3306/supermarket?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    #数据库账号
+    username: root
+    #数据库密码
+    password: 123456
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+      additional-paths: src/main/java #重启目录
+      exclude: WEB-INF/**
+    freemarker:
+      cache: false    #页面不加载缓存，修改即时生效
+mybatis:
+  #Mapper映射xml文件存放位置
+  mapper-locations: classpath:mappers/*.xml
+  #别名扫描路径
+  type-aliases-package: com.example.jwt_login.pojo
+  #开启驼峰命名
+  configuration:
+    map-underscore-to-camel-case: true

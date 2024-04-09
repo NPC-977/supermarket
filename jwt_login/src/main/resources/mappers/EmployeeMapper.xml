@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.jwt_login.mappers.EmployeeMapper">
+    <resultMap id="EmployeeResult" type="Employee">
+        <id column="e_id" property="eId"></id>
+        <result column="name" property="eName"></result>
+        <result column="id_num" property="eIdnum"></result>
+        <result column="date" property="eDate"></result>
+        <result column="wages" property="eWages"></result>
+    </resultMap>
+    <resultMap id="ClockRecord" type="ClockRecord">
+        <id column="id" property="id"></id>
+        <result column="e_id" property="eId"></result>
+        <result column="name" property="eName"></result>
+        <result column="date" property="eClocktime"></result>
+    </resultMap>
+    <select id="findAll" resultMap="EmployeeResult">
+        select * from sys_employee order by date
+    </select>
+    <insert id="employeeClock" parameterType="String">
+        insert into sys_clock_record values (null,#{pId},CURRENT_TIMESTAMP)
+    </insert>
+    <select id="employeeClockRecord" resultMap="ClockRecord">
+        select cr.id,e.e_id,e.name,cr.date from sys_clock_record as cr
+            left join sys_employee as e on cr.e_id = e.e_id
+        where e.e_id is not null and name  is not null
+        order by cr.date
+    </select>
+    <insert id="addEmployee" parameterType="Employee">
+        insert into sys_employee value (#{eId},#{eName},#{eIdnum},CURRENT_TIMESTAMP,#{eWages},#{eURid})
+    </insert>
+    <update id="modifyEmployee" parameterType="Employee">
+        update sys_employee set name = #{eName}, id_num = #{eIdnum}, wages = #{eWages}
+        where e_id = #{eId}
+    </update>
+
+    <select id="getUrid" resultType="String">
+        select urid from sys_employee where e_id = #{id}
+    </select>
+    <select id="getUid" resultType="String">
+        select user_id from sys_user_role where id=#{urid}
+    </select>
+    <delete id="deleteUser">
+        delete from sys_user where id=#{uid}
+    </delete>
+    <delete id="deleteUserRole">
+        delete from sys_user_role where id=#{urid}
+    </delete>
+    <delete id="deleteEmployee">
+        delete
+        from sys_employee
+        where e_id = #{id}
+    </delete>
+    <select id="getEmployeeId" resultType="String">
+        select *
+        from sys_employee e
+        left join sys_user_role ur on e.urid=ur.id left join sys_user u on u.id=ur.user_id
+        where u.username=#{username}
+    </select>
+</mapper>

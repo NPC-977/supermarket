@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.jwt_login.mappers.UserMapper">
+    <resultMap id="UserResult" type="User">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="is_account_expired" property="isAccountNonExpired"></result>
+        <result column="is_account_locked" property="isAccountNonLocked"></result>
+        <result column="is_credentials_expired" property="isCredentialsNonExpired"></result>
+        <result column="is_enable" property="isEnabled"></result>
+        <result column="avatar" property="avatar"></result>
+        <collection property="roleList" ofType="Role">
+            <id column="r_id" property="id"></id>
+            <result column="role_name" property="name"></result>
+            <result column="role_description" property="description"></result>
+        </collection>
+    </resultMap>
+    <select id="findUserByUsername" resultMap="UserResult">
+        select u.id,u.username,u.password,u.is_account_expired,u.is_account_locked,u.is_credentials_expired,u.is_enable,u.avatar,
+               r.id as r_id,r.role_name,r.role_description
+        from sys_user as u
+                 left join sys_user_role as ur on u.id = ur.user_id
+                 left join sys_role as r on r.id = ur.role_id
+        where username=#{username}
+    </select>
+    <select id="checkAccount" resultType="int">
+        select count(*) from sys_user where username=#{username}
+    </select>
+    <select id="checkEid" resultType="int">
+        select count(*) from sys_employee where e_id=#{eid}
+    </select>
+    <select id="checkName" resultType="int">
+        select count(*) from sys_employee where name=#{name}
+    </select>
+    <insert id="addUser" parameterType="User">
+        insert into sys_user(username,password,is_account_expired,is_account_locked,is_credentials_expired,is_enable)
+        values(#{username},#{password},0,0,0,0)
+    </insert>
+    <update id="updatePassword">
+        update sys_user set password = #{newPassword} where username=#{username} and password=#{password}
+    </update>
+    <update id="setAvatar">
+        update sys_user set avatar = #{avatar} where username=#{username}
+    </update>
+</mapper>
